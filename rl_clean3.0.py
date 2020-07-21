@@ -1,25 +1,23 @@
 #! python3
-# removeCsvHeader.py - カレントディレクトリの全CSVファイルから見出しを削除する
 
 import csv, os
 import sys
 import re
-sys.path.append('/Users/HOgishima/.pyenv/versions/3.7.1/lib/python3.7/site-packages')
 import pandas as pd
 
-#os.chdir('./python/rl_clean/data') # ここでフォルダを選択
+#os.chdir('.XXXXXXXXX') # select folder here
 #os.makedirs('clean', exist_ok=True)
 
 result = pd.DataFrame(columns=['subjID', 'trial', 'choice', 'outcome'])
 
 # CSVファイルのみを探して変数に格納
-for (folder, subfolders, files) in os.walk('/Users/HOgishima/Box Sync/Code/psychopy/reversal learning/data'):
+for (folder, subfolders, files) in os.walk('XXXXXXXX'): # Enter the folder where you stored your reverse learning task data here.
     os.chdir('{}'.format(folder))
     for file in files:
         if not file.endswith('.csv'):
-            continue # CSVファイルでなければスキップ
+            continue # skip if a file is not .csv
 
-        print('データクリーニング中 ' + file + '...')
+        print('cleaning ' + file + '...')
 
         # データの整理
         file_delete = pd.read_csv(file,
@@ -39,30 +37,30 @@ for (folder, subfolders, files) in os.walk('/Users/HOgishima/Box Sync/Code/psych
         file_delete.loc[(file_delete['stim2_posx'] == -400) & (file_delete['stim2_posy'] == 0), 'stim2'] = 'left'
         file_delete.loc[(file_delete['stim2_posx'] == 0) & (file_delete['stim2_posy'] == -200), 'stim2'] = 'down'
 
-        # subjIDとtrialの定義
+        # define subjID & trial
         file_delete['subjID'] = '{}'.format(file)
         file_delete['trial'] = list(file_delete.reset_index(drop=True).index+1)
 
-        # choiceを定義
+        # define choice
         file_delete.loc[(file_delete['stim1'] == file_delete['key_resp_correct.keys']) |
             (file_delete['stim1'] == file_delete['key_resp_faulse.keys']), 'choice'] = 1
         file_delete.loc[(file_delete['stim2'] == file_delete['key_resp_correct.keys']) |
             (file_delete['stim2'] == file_delete['key_resp_faulse.keys']), 'choice'] = 2
 
-        # outcomeを定義
+        # define outcome
         file_delete.loc[file_delete['key_resp_correct.keys'] == 'up', 'outcome'] = 1
         file_delete.loc[file_delete['key_resp_correct.keys'] == 'right', 'outcome'] = 1
         file_delete.loc[file_delete['key_resp_correct.keys'] == 'left', 'outcome'] = 1
         file_delete.loc[file_delete['key_resp_correct.keys'] == 'down', 'outcome'] = 1
         file_delete.loc[file_delete['key_resp_correct.keys'] == 'None', 'outcome'] = -1
 
-        # 書き出すファイルを作成
+        # 
         result = result.append(file_delete)
 
         print(result)
 
-#データの書き出し
-result.to_csv('/Users/HOgishima/Box Sync/Code/python/clean/rl_clean.txt',
+#
+result.to_csv('XXXXXXXXXXX',  #Enter the folder in which you want to save the dataset here.
 columns=['subjID', 'trial', 'choice', 'outcome'],header=True, index=False, mode='w', sep='\t')
 
-print('整理が完了しました')
+print('completed')
