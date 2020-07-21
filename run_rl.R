@@ -8,7 +8,7 @@ df <- read.csv('XXXXXXX.csv',stringsAsFactors = F, header = T)
 
 # make dataset
 data <- list(T=nrow(df),
-             N=nlevels(factor(df$subject)),
+             N=nlevels(factor(df$subjID)),
              Tsubj=40,
              choice=df$choice,
              outcome=df$outcome)
